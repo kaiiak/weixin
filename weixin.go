@@ -2,8 +2,8 @@ package main
 
 import (
 	"crypto/sha1"
-	"encoding/base64"
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"sort"
@@ -40,8 +40,8 @@ func main() {
 				log.Println(err)
 				w.Write(refresh)
 			}
-			if base64.URLEncoding.EncodeToString(h.Sum(nil)) != r.FormValue("signature") {
-				log.Println("sha1: ", h.Sum(nil))
+			if fmt.Sprintf("%x",h.Sum(nil)) != r.FormValue("signature") {
+				log.Println("sha1: ", fmt.Sprintf("%x",h.Sum(nil)))
 				log.Println("signature: ", r.FormValue("signature"))
 				log.Println("sha1不匹配！")
 				w.Write(refresh)
