@@ -12,7 +12,7 @@ import (
 func main() {
 	var wxToken = flag.String("wxtoken", "", "WeiXin Token")
 	var host = flag.String("host", "127.0.0.1", "listen host")
-	var port = flag.String("port", "80", "losten port")
+	var port = flag.String("port", "80", "listen port")
 	var refresh = []byte(`<html>
 <meta http-equiv="refresh" content="0;url=https://kaiiak.github.io/">
 </html>`)
