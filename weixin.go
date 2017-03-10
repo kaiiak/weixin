@@ -41,8 +41,6 @@ func main() {
 				w.Write(refresh)
 			}
 			if fmt.Sprintf("%x",h.Sum(nil)) != r.FormValue("signature") {
-				log.Println("sha1: ", fmt.Sprintf("%x",h.Sum(nil)))
-				log.Println("signature: ", r.FormValue("signature"))
 				log.Println("sha1不匹配！")
 				w.Write(refresh)
 				return
