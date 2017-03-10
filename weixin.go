@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/sha1"
+	"encoding/base64"
 	"flag"
 	"log"
 	"net/http"
@@ -26,7 +27,7 @@ func main() {
 			}
 			var arg []string
 			var sum string
-			arg = append(arg, r.FormValue("token"))
+			arg = append(arg, *wxToken)
 			arg = append(arg, r.FormValue("timestamp"))
 			arg = append(arg, r.FormValue("nonce"))
 			sort.Strings(arg)
@@ -39,8 +40,8 @@ func main() {
 				log.Println(err)
 				w.Write(refresh)
 			}
-			if string(h.Sum(nil)) != r.FormValue("signature") {
-				log.Println("sha1: ", string(h.Sum(nil)))
+			if base64.URLEncoding.EncodeToString(h.Sum(nil)) != r.FormValue("signature") {
+				log.Println("sha1: ", h.Sum(nil))
 				log.Println("signature: ", r.FormValue("signature"))
 				log.Println("sha1不匹配！")
 				w.Write(refresh)
