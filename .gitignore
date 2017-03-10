@@ -22,3 +22,9 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+# build files
+weixin
+
+# logs
+nohup.out
