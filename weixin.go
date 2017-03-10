@@ -10,6 +10,8 @@ import (
 
 func main() {
 	var wxToken = flag.String("wxtoken", "", "WeiXin Token")
+	var host = flag.String("host", "127.0.0.1", "listen host")
+	var port = flag.String("port", "80", "losten port")
 	var refresh = []byte(`<html>
 <meta http-equiv="refresh" content="0;url=https://kaiiak.github.io/">
 </html>`)
@@ -20,6 +22,7 @@ func main() {
 			if *wxToken == "" {
 				log.Println("token不能为空")
 				w.Write(refresh)
+				return
 			}
 			var arg []string
 			var sum string
@@ -30,18 +33,22 @@ func main() {
 			for i := 0; i < len(arg); i++ {
 				sum += arg[i]
 			}
+			log.Println(sum)
 			h := sha1.New()
 			if _, err := h.Write([]byte(sum)); err != nil {
 				log.Println(err)
 				w.Write(refresh)
 			}
 			if string(h.Sum(nil)) != r.FormValue("signature") {
+				log.Println("sha1: ", string(h.Sum(nil)))
+				log.Println("signature: ", r.FormValue("signature"))
 				log.Println("sha1不匹配！")
 				w.Write(refresh)
+				return
 			}
 			w.Write([]byte(r.FormValue("echostr")))
 			log.Println("验证成功！")
 		}
 	})
-	http.ListenAndServe("0.0.0.0:80", nil)
+	http.ListenAndServe(*host+":"+*port, nil)
 }
