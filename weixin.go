@@ -18,7 +18,7 @@ func main() {
 </html>`)
 
 	flag.Parse()
-	http.HandleFunc("/wx", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/wx/verify", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			if *wxToken == "" {
 				log.Println("token不能为空")
@@ -40,7 +40,7 @@ func main() {
 				log.Println(err)
 				w.Write(refresh)
 			}
-			if fmt.Sprintf("%x",h.Sum(nil)) != r.FormValue("signature") {
+			if fmt.Sprintf("%x", h.Sum(nil)) != r.FormValue("signature") {
 				log.Println("sha1不匹配！")
 				w.Write(refresh)
 				return
