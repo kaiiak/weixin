@@ -18,13 +18,11 @@ func main() {
 </html>`)
 
 	flag.Parse()
+	if *wxToken == "" {
+		panic("token 不能为空")
+	}
 	http.HandleFunc("/wx/verify", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
-			if *wxToken == "" {
-				log.Println("token不能为空")
-				w.Write(refresh)
-				return
-			}
 			var arg []string
 			var sum string
 			arg = append(arg, *wxToken)
@@ -36,10 +34,12 @@ func main() {
 			}
 			h := sha1.New()
 			if _, err := h.Write([]byte(sum)); err != nil {
+				w.WriteHeader(http.StatusForbidden)
 				log.Println(err)
 				w.Write(refresh)
 			}
 			if fmt.Sprintf("%x", h.Sum(nil)) != r.FormValue("signature") {
+				w.WriteHeader(http.StatusUnauthorized)
 				log.Println("sha1不匹配！")
 				w.Write(refresh)
 				return
