@@ -34,7 +34,6 @@ func main() {
 			for i := 0; i < len(arg); i++ {
 				sum += arg[i]
 			}
-			log.Println(sum)
 			h := sha1.New()
 			if _, err := h.Write([]byte(sum)); err != nil {
 				log.Println(err)
@@ -48,6 +47,11 @@ func main() {
 			w.Write([]byte(r.FormValue("echostr")))
 			log.Println("验证成功！")
 		}
+	})
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("404 not found")
+		w.WriteHeader(http.StatusNotFound)
+		w.Write(refresh)
 	})
 	http.ListenAndServe(*host+":"+*port, nil)
 }
