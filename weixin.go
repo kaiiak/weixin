@@ -37,6 +37,7 @@ func main() {
 				w.WriteHeader(http.StatusForbidden)
 				log.Println(err)
 				w.Write(refresh)
+				return
 			}
 			if fmt.Sprintf("%x", h.Sum(nil)) != r.FormValue("signature") {
 				w.WriteHeader(http.StatusUnauthorized)
@@ -45,6 +46,7 @@ func main() {
 				return
 			}
 			w.Write([]byte(r.FormValue("echostr")))
+			log.Printf("timestamp:%s, nonce: %s, signature:%s, echostr:%s\n", r.FormValue("timestamp"), r.FormValue("nonce"), r.FormValue("signature"), r.FormValue("echostr"))
 			log.Println("验证成功！")
 		}
 	})
