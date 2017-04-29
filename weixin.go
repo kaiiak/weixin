@@ -13,9 +13,7 @@ func main() {
 	var wxToken = flag.String("wxtoken", "", "WeiXin Token")
 	var host = flag.String("host", "127.0.0.1", "listen host")
 	var port = flag.String("port", "80", "listen port")
-	var refresh = []byte(`<html>
-<meta http-equiv="refresh" content="0;url=https://kaiiak.github.io/">
-</html>`)
+	var refreshURL = `https://kaiiak.github.io/`
 
 	flag.Parse()
 	if *wxToken == "" {
@@ -36,24 +34,24 @@ func main() {
 			if _, err := h.Write([]byte(sum)); err != nil {
 				w.WriteHeader(http.StatusForbidden)
 				log.Println(err)
-				w.Write(refresh)
+				http.Redirect(w, r, refreshURL, http.StatusFound)
 				return
 			}
 			if fmt.Sprintf("%x", h.Sum(nil)) != r.FormValue("signature") {
 				w.WriteHeader(http.StatusUnauthorized)
 				log.Println("sha1不匹配！")
-				w.Write(refresh)
+				http.Redirect(w, r, refreshURL, http.StatusFound)
 				return
 			}
 			w.Write([]byte(r.FormValue("echostr")))
-			log.Printf("timestamp:%s, nonce: %s, signature:%s, echostr:%s\n", r.FormValue("timestamp"), r.FormValue("nonce"), r.FormValue("signature"), r.FormValue("echostr"))
 			log.Println("验证成功！")
+			return
 		}
 	})
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("404 not found")
+		log.Println("404 not found: ", r.URL)
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(refresh)
+		http.Redirect(w, r, refreshURL, http.StatusFound)
 	})
 	http.ListenAndServe(*host+":"+*port, nil)
 }
